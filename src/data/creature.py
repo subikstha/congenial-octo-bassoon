@@ -1,13 +1,19 @@
-import sqlite3
+from .init import curs, conn
 from model.creature import Creature
 
-DB_NAME = "cryptid.db"
-conn = sqlite3.connect(DB_NAME) # Create a DB connection
-curs = conn.cursor() # Create a cursor curs with conn.cursor()
+curs.execute(""" 
+    create table if not exists creature(
+        name text primary key,
+        description text,
+        country text,
+        area text,
+        aka text
+    )
+""")
 
 # This init() function makes the connection to the sqlite3 and the database fake cryptid.db, 
-def init():
-    curs.execute("create table creature(name, description, country, area, aka)")
+# def init():
+#     curs.execute("create table creature(name, description, country, area, aka)")
 
 # row_to_model converts a tuple returned by a fetch function to a model object
 def row_to_model(row: tuple) -> Creature:
