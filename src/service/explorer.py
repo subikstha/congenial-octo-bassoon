@@ -1,5 +1,10 @@
+import os
+USE_SQLITE = os.getenv("USE_SQLITE", "false")
+if USE_SQLITE:
+    import data.explorer as data
+else:
+    import fake.explorer as data
 from model.explorer import Explorer
-import fake.explorer as data
 
 def get_all() -> list[Explorer]:
     return data.get_all()

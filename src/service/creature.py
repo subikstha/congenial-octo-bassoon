@@ -1,5 +1,10 @@
+import os
+USE_SQLITE = os.getenv("USE_SQLITE", "false")
 from model.creature import Creature
-import fake.creature as data
+if USE_SQLITE:
+    import data.creature as data
+else:
+    import fake.creature as data
 
 def get_all():
     return data.get_all()

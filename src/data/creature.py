@@ -18,7 +18,7 @@ curs.execute("""
 # row_to_model converts a tuple returned by a fetch function to a model object
 def row_to_model(row: tuple) -> Creature:
     name, description, country, area, aka = row
-    return Creature(name, description, country, area, aka)
+    return Creature(name=name, description=description, country=country, area=area, aka=aka)
 
 # model_to_dict() translates a Pydantic model to a dictionary, sutable for use as a named query parameter
 def model_to_dict(creature: Creature) -> dict:
@@ -35,12 +35,14 @@ def get_all() -> list[Creature]:
     qry = "select * from creature"
     curs.execute(qry)
     rows = list(curs.fetchall())
-    return [row_to_model(rows) for row in rows]
+    return [row_to_model(row) for row in rows]
 
 def create(creature: Creature):
-    qry = """insert into creature values (:name, :description, :area, :aka)"""
+    qry = """insert into creature values (:name, :description,:country, :area, :aka)"""
     params = model_to_dict(creature)
     curs.execute(qry, params)
+    conn.commit()
+    return get_one(creature.name)
 
 def modify(creature: Creature):
     qry = """ 

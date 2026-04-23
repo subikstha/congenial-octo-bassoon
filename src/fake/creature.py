@@ -1,4 +1,4 @@
-from model.explorer import Creature
+from model.creature import Creature
 
 # fake data, replaced later by real DB and SQL
 _creatures = [

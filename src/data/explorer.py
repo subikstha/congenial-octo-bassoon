@@ -5,7 +5,7 @@ curs.execute("""
     create table if not exists explorer(
         name text primary key,
         description text,
-        country text,
+        country text
     )
 """)
 
@@ -16,14 +16,14 @@ curs.execute("""
 # row_to_model converts a tuple returned by a fetch function to a model object
 def row_to_model(row: tuple) -> Explorer:
     name, description, country = row
-    return Explorer(name, description, country)
+    return Explorer(name=name, description=description, country=country)
 
 # model_to_dict() translates a Pydantic model to a dictionary, sutable for use as a named query parameter
-def model_to_dict(creature: Explorer) -> dict:
-    return creature.dict()
+def model_to_dict(explorer: Explorer) -> dict:
+    return explorer.dict() if explorer else None
 
 def get_one(name: str) -> Explorer:
-    qry = """Select * from creature where name=:name"""
+    qry = """Select * from explorer where name=:name"""
     params = {"name": name}
     curs.execute(qry, params)
     row = curs.fetchone()
@@ -33,12 +33,14 @@ def get_all() -> list[Explorer]:
     qry = "select * from explorer"
     curs.execute(qry)
     rows = list(curs.fetchall())
-    return [row_to_model(rows) for row in rows]
+    return [row_to_model(row) for row in rows]
 
 def create(explorer: Explorer):
-    qry = """insert into explorer values (:name, :description, :area, :aka)"""
+    qry = """insert into explorer values (:name, :description, :country)"""
     params = model_to_dict(explorer)
     curs.execute(qry, params)
+    conn.commit()
+    return get_one(explorer.name)
 
 def modify(explorer: Explorer):
     qry = """ 
