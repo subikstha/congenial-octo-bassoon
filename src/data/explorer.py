@@ -1,13 +1,11 @@
 from .init import curs, conn
-from model.creature import Creature
+from model.explorer import Explorer
 
 curs.execute(""" 
-    create table if not exists creature(
+    create table if not exists explorer(
         name text primary key,
         description text,
         country text,
-        area text,
-        aka text
     )
 """)
 
@@ -16,50 +14,48 @@ curs.execute("""
 #     curs.execute("create table creature(name, description, country, area, aka)")
 
 # row_to_model converts a tuple returned by a fetch function to a model object
-def row_to_model(row: tuple) -> Creature:
-    name, description, country, area, aka = row
-    return Creature(name, description, country, area, aka)
+def row_to_model(row: tuple) -> Explorer:
+    name, description, country = row
+    return Explorer(name, description, country)
 
 # model_to_dict() translates a Pydantic model to a dictionary, sutable for use as a named query parameter
-def model_to_dict(creature: Creature) -> dict:
+def model_to_dict(creature: Explorer) -> dict:
     return creature.dict()
 
-def get_one(name: str) -> Creature:
+def get_one(name: str) -> Explorer:
     qry = """Select * from creature where name=:name"""
     params = {"name": name}
     curs.execute(qry, params)
     row = curs.fetchone()
     return row_to_model(row)
 
-def get_all() -> list[Creature]:
-    qry = "select * from creature"
+def get_all() -> list[Explorer]:
+    qry = "select * from explorer"
     curs.execute(qry)
     rows = list(curs.fetchall())
     return [row_to_model(rows) for row in rows]
 
-def create(creature: Creature):
-    qry = """insert into creature values (:name, :description, :area, :aka)"""
-    params = model_to_dict(creature)
+def create(explorer: Explorer):
+    qry = """insert into explorer values (:name, :description, :area, :aka)"""
+    params = model_to_dict(explorer)
     curs.execute(qry, params)
 
-def modify(creature: Creature):
+def modify(explorer: Explorer):
     qry = """ 
-        update creature set country = :country,
+        update explorer set country = :country,
         name=:name,
         description=:description,
-        area=:area,
-        aka=:aka
         where name=:name_orig
     """
-    params = model_to_dict(creature)
-    params["name_orig"] = creature.name
+    params = model_to_dict(explorer)
+    params["name_orig"] = explorer.name
     _ = curs.execute(qry, params)
-    return get_one(creature.name)
+    return get_one(explorer.name)
 
-def replace(creature: Creature):
-    return creature
+def replace(explorer: Explorer):
+    return explorer
 
-def delete(creature: Creature):
+def delete(explorer: Explorer):
     qry = "delete from creature where name = :name"
-    params = {"name": creature.name}
+    params = {"name": explorer.name}
     curs.execute(qry, params)
