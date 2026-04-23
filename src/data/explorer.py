@@ -1,5 +1,6 @@
 from .init import curs, conn
 from model.explorer import Explorer
+from errors import Missing
 
 curs.execute(""" 
     create table if not exists explorer(
@@ -23,11 +24,15 @@ def model_to_dict(explorer: Explorer) -> dict:
     return explorer.dict() if explorer else None
 
 def get_one(name: str) -> Explorer:
+    if not name: return None
     qry = """Select * from explorer where name=:name"""
     params = {"name": name}
     curs.execute(qry, params)
     row = curs.fetchone()
-    return row_to_model(row)
+    if row:
+        return row_to_model(row)
+    else:
+        raise Missing(f"Explorer {name} not found")
 
 def get_all() -> list[Explorer]:
     qry = "select * from explorer"
