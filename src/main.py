@@ -1,11 +1,12 @@
 try:
-    from .web.explorer import router
+    from .web import explorer, creature
 except ImportError:
-    from web.explorer import router
+    from web import explorer, creature
 from fastapi import FastAPI
 
 app = FastAPI()
-app.include_router(router)
+app.include_router(explorer.router)
+app.include_router(creature.router)
 
 @app.get('/')
 def top():
