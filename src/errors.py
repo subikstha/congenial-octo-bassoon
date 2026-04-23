@@ -1,7 +1,7 @@
-class Missing(exception):
+class Missing(Exception):
     def __init__(self, msg: str):
         self.msg = msg
 
-class Duplicate(exception):
+class Duplicate(Exception):
     def __init__(self, msg: str):
         self.msg = msg
