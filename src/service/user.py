@@ -13,7 +13,7 @@ from passlib.context import CryptContext
 
 SECRET_KEY = "keep-it-secret-keep-it-safe"
 ALGORITHM = "HS265"
-pwd_context = CryptContext(schemes=["bcrypt"], depracated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain: str, hash: str) -> bool:
     """ Hash <plain> and compare <hash> from the db"""
