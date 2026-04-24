@@ -43,7 +43,7 @@ def get_current_user(token: str) -> User | None:
 
 def lookup_user(username: str) -> User | None:
     """ Return a matching User from the database for <name> """
-    if(user := data.get(username)):
+    if(user := data.get_one(username)):
         return User
     return None
 
